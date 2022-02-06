@@ -6,9 +6,9 @@ The dnsmasq container image is stored in hub.docker.com. YML file is provided fo
 
 To make easy to change configuration, design to store the setting/configuration files in NFS. Three files MUST be presented in the mount point
 
-file:hosts
-file:dnsmasq.conf
-file:resolv.conf
+1. file:hosts
+2. file:dnsmasq.conf
+3. file:resolv.conf
 
 Example of the files is given. 
 
