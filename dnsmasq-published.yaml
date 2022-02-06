@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: dnsmasq-config-nfs-pv
+spec:
+  capacity:
+    storage: 1Mi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  storageClassName: dnsmasq-config
+  nfs:
+    server: <Your NFS server IP>
+    path: "<Your NFS mount path>"
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dnsmasq-config-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: dnsmasq-config 
+  resources:
+    requests:
+      storage: 1Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dnsmasq
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: dnsmasq
+  template:
+    metadata:
+      labels:
+        app: dnsmasq
+    spec:
+      containers:
+        - name: dnsmasq
+          image: cwalterhk/dnsmasq:13.0
+          command: ["/root/startup.sh"]
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 53
+            protocol: UDP
+          volumeMounts:
+          - name: config-volv
+            mountPath: "/root/config"
+      volumes:
+      - name: config-volv
+        persistentVolumeClaim:
+          claimName: dnsmasq-config-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dnsmasq-service
+spec:
+  selector:
+    app: dnsmasq
+  ports:
+    - name: dns
+      protocol: UDP
+      port: 53
+      targetPort: 53
+  externalIPs:
+    - <Your k8s/k3s node IP#1>
+    - <Your k8s/k3s node IP#2>
+
