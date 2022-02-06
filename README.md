@@ -12,8 +12,8 @@ file:resolv.conf
 
 Example of the files is given. 
 
-1. hosts file to store the DNS record
-2. dnsmasq.conf is the configuration file of dnmasq
+1. hosts file to store the DNS records. Edit the file accordingly.
+2. dnsmasq.conf is the configuration file of dnmasq.  Change your setting accordingly.
 3. resolv.conf records the DNS forwarder IP adddress
 
 
